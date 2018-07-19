@@ -10,7 +10,13 @@ public class HexagonComponent : MonoBehaviour
 
     public void UpdatePosition()
     {
-        this.transform.position = Hex.PositionFCamera(Camera.main.transform.position, HexMap.mapNumHex.y, HexMap.mapNumHex.x, HexMap.OptionsManager.GetComponent<OptionsManager>().allowWrapEastWest, HexMap.OptionsManager.GetComponent<OptionsManager>().allowWrapNorthSouth);
+        this.transform.position = Hex.PositionFCamera(
+            Camera.main.transform.position,
+             HexMap.nRows,
+            HexMap.nColumns,
+            HexMap.OptionsManager.GetComponent<OptionsManager>().allowWrapEastWest,
+            HexMap.OptionsManager.GetComponent<OptionsManager>().allowWrapNorthSouth
+            );
         
     }
   

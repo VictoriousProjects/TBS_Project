@@ -5,14 +5,16 @@ using UnityEngine;
 public class CameraMotion : MonoBehaviour {
 
 	// Use this for initialization
-	void Start () {
+	void Start ()
+    {
         oldPos = this.transform.position;
 
     }
     Vector3 oldPos;
 
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
         // todo: click n drag
         //Wasd
         //Zoom
@@ -34,7 +36,7 @@ public class CameraMotion : MonoBehaviour {
             //algo ha movido la camara
             this.oldPos = this.transform.position;
 
-            if(hexagons ==null)
+            if(hexagons == null)
                 hexagons = GameObject.FindObjectsOfType<HexagonComponent>();
 
             foreach( HexagonComponent h in hexagons)

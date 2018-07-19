@@ -49,6 +49,7 @@ public class Hexagon
 
     public Vector3 PositionFCamera(Vector3 camPos,float numRows, float numColumns, bool allowWrapEastWest, bool allowWrapNorthSouth)
     {
+       
         float mapH = numRows * HexVerticalSpac();
         float mapW = numColumns * HexHorizontalSpac();
 
@@ -56,15 +57,7 @@ public class Hexagon
   
         if(allowWrapEastWest)
         {
-            float WidthToCamera = (position.x - camPos.x) / mapW;
-
-            if (Mathf.Abs(WidthToCamera) <= 0.5f)
-                 return position;
-                       
-            if (WidthToCamera > 0)
-                WidthToCamera += 0.5f;
-            else
-                WidthToCamera -= 0.5f;
+            float WidthToCamera = (float)(position.x - camPos.x) / mapW;
 
             int WidthToCameraToMove = (int)WidthToCamera;
             position.x -= WidthToCameraToMove * mapW;
@@ -73,14 +66,6 @@ public class Hexagon
         if (allowWrapNorthSouth)
         {
             float HeightToCamera = (position.z - camPos.z) / mapH;
-
-            if (Mathf.Abs(HeightToCamera) <= 0.5f)
-                return position;
-
-            if (HeightToCamera > 0)
-                HeightToCamera += 0.5f;
-            else
-                HeightToCamera -= 0.5f;
 
             int HeightToCameraToMove = (int)HeightToCamera;
             position.z -= HeightToCameraToMove * mapH;
