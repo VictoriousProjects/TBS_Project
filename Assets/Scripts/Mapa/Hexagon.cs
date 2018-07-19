@@ -18,6 +18,11 @@ public class Hexagon
     public readonly int R; //row
     public readonly int S;
 
+    public float Altitude;
+    public float Wet;
+    public float Cold;
+    
+
     float rad = 1f;
 
     public Vector3 Position()
@@ -71,6 +76,15 @@ public class Hexagon
             position.z -= HeightToCameraToMove * mapH;
         }
         return position;
+    }
+
+    public static float Distance(Hexagon a, Hexagon b)
+    {
+        float ret = 0;
+
+        ret = Mathf.Max(Mathf.Abs(a.C - b.C), Mathf.Abs(a.R - b.R), Mathf.Abs(a.S - b.S));
+
+        return (float)ret;
     }
 
 }

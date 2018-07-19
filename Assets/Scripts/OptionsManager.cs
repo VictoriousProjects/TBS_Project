@@ -9,6 +9,9 @@ public class OptionsManager : MonoBehaviour
 
     public bool allowWrapEastWest = true; /* forma de tubo, cuando la camara se mueve a la derecha, aparecerá por la izquierda & viceversa*/
     public bool allowWrapNorthSouth = false; /* forma de tubo, cuando la camara se mueve abajo , aparecerá por arriba & viceversa*/
-    
+
+    [Header("UI")]
+
+    public bool activateCoordCells = true;
 
 }
