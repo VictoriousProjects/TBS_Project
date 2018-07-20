@@ -17,7 +17,9 @@ public class HexagonComponent : MonoBehaviour
             HexMap.OptionsManager.GetComponent<OptionsManager>().allowWrapEastWest,
             HexMap.OptionsManager.GetComponent<OptionsManager>().allowWrapNorthSouth
             );
-        
+        string temp = Hex.Altitude.ToString("n2");
+
+        GetComponentInChildren<TextMesh>().text = string.Format(temp);
     }
   
 

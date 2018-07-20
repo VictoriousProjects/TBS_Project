@@ -1,28 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Hexagon
 {
-    public Hexagon()
-    {
-    }
-    public Hexagon(int c, int r)
-    {
-        this.C = c;
-        this.R = r;
-        this.S = -(c + r);
-    }
-
     public readonly int C; //column
     public readonly int R; //row
     public readonly int S;
 
-    public float Altitude;
-    public float Wet;
-    public float Cold;
-    
+    public Hexagon()
+    {
+        C = 0;
+        R = 0;
+        S = 0;
+    }
 
+    public Hexagon(int c, int r)
+    {
+        C = c;
+        R = r;
+        S = -(c + r);
+    }
+
+    public float Altitude;
     float rad = 1f;
 
     public Vector3 Position()
@@ -62,7 +63,7 @@ public class Hexagon
   
         if(allowWrapEastWest)
         {
-            float WidthToCamera = (float)(position.x - camPos.x) / mapW;
+            float WidthToCamera = Mathf.Round((position.x - camPos.x) / mapW);
 
             int WidthToCameraToMove = (int)WidthToCamera;
             position.x -= WidthToCameraToMove * mapW;
@@ -70,7 +71,7 @@ public class Hexagon
 
         if (allowWrapNorthSouth)
         {
-            float HeightToCamera = (position.z - camPos.z) / mapH;
+            float HeightToCamera = Mathf.Round((position.z - camPos.z) / mapH);
 
             int HeightToCameraToMove = (int)HeightToCamera;
             position.z -= HeightToCameraToMove * mapH;

@@ -17,8 +17,23 @@ public class Hexagonal_Map : MonoBehaviour
     public Material MatMountains;
     public Material MatLand;
     public Material MatWater;
-    public Material MatPlans;
+    public Material MatPlains;
     public Material MatDirt;
+    public Material MatSnow;
+
+
+    public float A_Mountain = 1.3f;
+
+    public float A_Hill = 0.9f;
+
+    public float A_Plains = 0.3f;
+
+    public float A_Coast = -0.5f;
+
+    //public Vector2 A_Mountain = new Vector2(0.7f, 1f);
+    //public Vector2 A_Plains = new Vector2(0.7f, 1f);
+    //public Vector2 A_Forest = new Vector2(0.7f, 1f);
+    //public Vector2 A_dirt = new Vector2(0.0f, 0.2f);
 
 
     public readonly int nRows = 30; //80- 128 mapa enorme en cv - test 66-106
@@ -32,6 +47,7 @@ public class Hexagonal_Map : MonoBehaviour
 
     private Hexagon[,] hexagons;
     private Dictionary<Hexagon, GameObject> Hex2GOMap;
+    private Dictionary<GameObject, Hexagon> Go2HexMap;
 
     public Hexagon GetHexagonAt(int x, int y)
     {
@@ -41,27 +57,26 @@ public class Hexagonal_Map : MonoBehaviour
             return null;
         }
 
-        if(OptionsManager.GetComponent<OptionsManager>().allowWrapEastWest)
+        if (OptionsManager.GetComponent<OptionsManager>().allowWrapEastWest)
         {
-            x = x % nRows;
+            x = x % nColumns;
 
             if(x < 0)
             {
-                x += nRows*2;
+                x += nColumns;
             }
-            x = x % nRows;
+
         }
-        if(OptionsManager.GetComponent<OptionsManager>().allowWrapNorthSouth)
+        if (OptionsManager.GetComponent<OptionsManager>().allowWrapNorthSouth)
         {
-            y = y % nColumns;
+            y = y % nRows;
 
             if (y < 0)
             {
-                y += nColumns*2;
+                y += nRows;
             }
-
-            y = y % nColumns;
         }
+
 
         try
         {
@@ -69,7 +84,7 @@ public class Hexagonal_Map : MonoBehaviour
         }
         catch
         {
-            Debug.LogError("hexagon at" + x + "," + y);
+            Debug.LogError("GetHexagonAt: " + x + "," + y);
             return null;
         }
     }
@@ -78,19 +93,18 @@ public class Hexagonal_Map : MonoBehaviour
    virtual public void GenMap()
    {
 
-        hexagons = new Hexagon[nRows, nColumns];
+        hexagons = new Hexagon[nColumns, nRows];
         Hex2GOMap = new Dictionary<Hexagon, GameObject>();
-
+        Go2HexMap = new Dictionary<GameObject, Hexagon>();
         for (int column = 0; column < nColumns; column++)
         {
             for (int row = 0; row < nRows; row++)
             {
                 Hexagon h = new Hexagon(column, row);
-
-                hexagons[row, column] = h;
-
                 h.Altitude = -0.5f;
+                hexagons[column,row ] = h;
 
+                
 
                 Vector3 pos = h.PositionFCamera(
                     Camera.main.transform.position,
@@ -109,17 +123,22 @@ public class Hexagonal_Map : MonoBehaviour
 
                 Hex2GOMap[h] = GO;
 
+                GO.name = string.Format("HEX: {0},{1}", column, row);
+
                 GO.GetComponent<HexagonComponent>().Hex = h;
                 GO.GetComponent<HexagonComponent>().HexMap = this;
 
                 if (OptionsManager.GetComponent<OptionsManager>().activateCoordCells)
                 {
+                    //if (GO.GetComponentInChildren<Renderer>().enabled == true)
+                    //   GO.GetComponentInChildren<TextMesh>().text = string.Format("{0},{1}", column, row);
                     if (GO.GetComponentInChildren<Renderer>().enabled == true)
-                       GO.GetComponentInChildren<TextMesh>().text = string.Format("{0},{1}", column, row);
-                   
+                        GO.GetComponentInChildren<TextMesh>().text = string.Format("{0}", h.Altitude);
+
+
                 }
 
-                  
+
             }
         }
         UpdateHVisual();
@@ -133,20 +152,38 @@ public class Hexagonal_Map : MonoBehaviour
             for (int row = 0; row < nRows; row++)
             {
 
-                Hexagon h = hexagons[row, column];
+                Hexagon h = hexagons[column, row];
                 GameObject GO = Hex2GOMap[h];
                 
                 MeshRenderer mr = GO.GetComponentInChildren<MeshRenderer>();
 
-                if (h.Altitude >= 0)
-                {
-                    mr.material = MatLand;
+              
+                if (h.Altitude >= A_Mountain)
+                    mr.material = MatMountains;
+                else if (h.Altitude < A_Hill && h.Altitude > A_Plains)
+                    mr.material = MatPlains;
+                    //if (row < nRows * (float)OptionsManager.GetComponent<OptionsManager>().percentBottomPole ||
+                    //   row > nRows * (float)OptionsManager.GetComponent<OptionsManager>().percentTopPole)
+                    //{
+                    //    mr.material = MatSnow;
+                    //}
 
-                }
+                else if (h.Altitude >= A_Hill && h.Altitude < A_Mountain)
+                    mr.material = MatLand;
+                    //if (row < nRows * (float)OptionsManager.GetComponent<OptionsManager>().percentBottomPole ||
+                    //   row > nRows * (float)OptionsManager.GetComponent<OptionsManager>().percentTopPole)
+                    //{
+                    //    mr.material = MatSnow;
+                    //}
+
+                else if (h.Altitude >= A_Coast && h.Altitude < A_Plains)
+                    mr.material = MatWater;
+                    //if (row < nRows * (float)OptionsManager.GetComponent<OptionsManager>().percentBottomPole ||
+                    //   row > nRows * (float)OptionsManager.GetComponent<OptionsManager>().percentTopPole)
+                    //{
+                    //    mr.material = MatSnow;
                 else
-                {
                     mr.material = MatOcean;
-                }
 
                 MeshFilter mfr = GO.GetComponentInChildren<MeshFilter>();
                 mfr.mesh = M_Water;
@@ -157,12 +194,13 @@ public class Hexagonal_Map : MonoBehaviour
     public Hexagon[] GetHexagonsInRange(Hexagon centerH, int range)
     {
         List<Hexagon> ret = new List<Hexagon>();
+        
         for (int dx = -range; dx < range - 1; dx++)
         {
-            for (int dy = Mathf.Max(-range + 1, -dx - range); dy < Mathf.Min(range, -dx + range - 1); dy++)
+            for (int dy = Mathf.Max((-range + 1),( -dx - range)); dy < (Mathf.Min(range,( -dx + range - 1))); ++dy)
             {
-                
-                ret.Add(GetHexagonAt( centerH.C + dx, centerH.R + dy));
+               // ret.Add(hexagons[centerH.C + dx, centerH.R + dy]);
+                ret.Add(GetHexagonAt(centerH.C + dx, centerH.R + dy) );
             }
         }
 
