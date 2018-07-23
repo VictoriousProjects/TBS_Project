@@ -8,10 +8,8 @@ public class MAP_Continents : Hexagonal_Map
     override public void GenMap()
     {
         base.GenMap();  // take base the virtual func.
-
-
-
-        //Random.InitState(0);
+        
+        Random.InitState(0);
 
         int nContinents = (int)OptionsManager.GetComponent<OptionsManager>().numberContinents; ;
         int continentsSpacing = nColumns / nContinents;
@@ -52,7 +50,7 @@ public class MAP_Continents : Hexagonal_Map
         UpdateHVisual();
     }
 
-    void ElevateArea(int c, int r, int range, float centerAltitude = 1f)
+    void ElevateArea(int c, int r, int range, float centerAltitude = .8f)
     {
 
         Hexagon centerH = GetHexagonAt(c, r);

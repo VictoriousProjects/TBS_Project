@@ -23,24 +23,28 @@ public class Hexagonal_Map : MonoBehaviour
 
 
     public float A_Mountain = 1.3f;
-
-    public float A_Hill = 0.9f;
-
-    public float A_Plains = 0.3f;
-
+    public float A_Hill = 0.8f;
+    public float A_Plains = 0.1f;
     public float A_Coast = -0.5f;
-
-    //public Vector2 A_Mountain = new Vector2(0.7f, 1f);
-    //public Vector2 A_Plains = new Vector2(0.7f, 1f);
-    //public Vector2 A_Forest = new Vector2(0.7f, 1f);
-    //public Vector2 A_dirt = new Vector2(0.0f, 0.2f);
-
-
+ 
     public readonly int nRows = 30; //80- 128 mapa enorme en cv - test 66-106
     public readonly int nColumns = 60;
 
+
+    [Header("Do not touch")]
+    public bool allow_Wrap_EW;
+    public bool allow_Wrap_NS;
+
     void Start ()
     {
+        A_Mountain = OptionsManager.GetComponent<OptionsManager>().A_Mountain;
+        A_Hill = OptionsManager.GetComponent<OptionsManager>().A_Hill;
+        A_Plains = OptionsManager.GetComponent<OptionsManager>().A_Plains;
+        A_Coast = OptionsManager.GetComponent<OptionsManager>().A_Coast;
+
+        allow_Wrap_EW = OptionsManager.GetComponent<OptionsManager>().allowWrapEastWest;
+        allow_Wrap_NS = OptionsManager.GetComponent<OptionsManager>().allowWrapNorthSouth;
+
         GenMap();
     }
 
@@ -48,6 +52,8 @@ public class Hexagonal_Map : MonoBehaviour
     private Hexagon[,] hexagons;
     private Dictionary<Hexagon, GameObject> Hex2GOMap;
     private Dictionary<GameObject, Hexagon> Go2HexMap;
+
+    
 
     public Hexagon GetHexagonAt(int x, int y)
     {
@@ -57,7 +63,7 @@ public class Hexagonal_Map : MonoBehaviour
             return null;
         }
 
-        if (OptionsManager.GetComponent<OptionsManager>().allowWrapEastWest)
+        if (allow_Wrap_EW)
         {
             x = x % nColumns;
 
@@ -67,7 +73,7 @@ public class Hexagonal_Map : MonoBehaviour
             }
 
         }
-        if (OptionsManager.GetComponent<OptionsManager>().allowWrapNorthSouth)
+        if (allow_Wrap_NS)
         {
             y = y % nRows;
 
@@ -100,7 +106,7 @@ public class Hexagonal_Map : MonoBehaviour
         {
             for (int row = 0; row < nRows; row++)
             {
-                Hexagon h = new Hexagon(column, row);
+                Hexagon h = new Hexagon(this,column, row);
                 h.Altitude = -0.5f;
                 hexagons[column,row ] = h;
 
@@ -109,9 +115,9 @@ public class Hexagonal_Map : MonoBehaviour
                 Vector3 pos = h.PositionFCamera(
                     Camera.main.transform.position,
                     nRows,
-                    nColumns, 
-                    OptionsManager.GetComponent<OptionsManager>().allowWrapEastWest, 
-                    OptionsManager.GetComponent<OptionsManager>().allowWrapNorthSouth 
+                    nColumns,
+                    allow_Wrap_EW,
+                    allow_Wrap_NS
                     );
 
                 GameObject GO = (GameObject)Instantiate(
@@ -122,21 +128,24 @@ public class Hexagonal_Map : MonoBehaviour
                     );
 
                 Hex2GOMap[h] = GO;
-
+                Go2HexMap[GO] = h;
+    
                 GO.name = string.Format("HEX: {0},{1}", column, row);
 
+                
+               
                 GO.GetComponent<HexagonComponent>().Hex = h;
                 GO.GetComponent<HexagonComponent>().HexMap = this;
 
-                if (OptionsManager.GetComponent<OptionsManager>().activateCoordCells)
-                {
-                    //if (GO.GetComponentInChildren<Renderer>().enabled == true)
-                    //   GO.GetComponentInChildren<TextMesh>().text = string.Format("{0},{1}", column, row);
-                    if (GO.GetComponentInChildren<Renderer>().enabled == true)
-                        GO.GetComponentInChildren<TextMesh>().text = string.Format("{0}", h.Altitude);
+                //if (OptionsManager.GetComponent<OptionsManager>().activateCoordCells)
+                //{
+                //    //if (GO.GetComponentInChildren<Renderer>().enabled == true)
+                //    //   GO.GetComponentInChildren<TextMesh>().text = string.Format("{0},{1}", column, row);
+                //    if (GO.GetComponentInChildren<Renderer>().enabled == true)
+                //        GO.GetComponentInChildren<TextMesh>().text = string.Format("{0}", h.Altitude);
 
 
-                }
+                //}
 
 
             }
@@ -156,37 +165,37 @@ public class Hexagonal_Map : MonoBehaviour
                 GameObject GO = Hex2GOMap[h];
                 
                 MeshRenderer mr = GO.GetComponentInChildren<MeshRenderer>();
-
-              
-                if (h.Altitude >= A_Mountain)
-                    mr.material = MatMountains;
-                else if (h.Altitude < A_Hill && h.Altitude > A_Plains)
-                    mr.material = MatPlains;
-                    //if (row < nRows * (float)OptionsManager.GetComponent<OptionsManager>().percentBottomPole ||
-                    //   row > nRows * (float)OptionsManager.GetComponent<OptionsManager>().percentTopPole)
-                    //{
-                    //    mr.material = MatSnow;
-                    //}
-
-                else if (h.Altitude >= A_Hill && h.Altitude < A_Mountain)
-                    mr.material = MatLand;
-                    //if (row < nRows * (float)OptionsManager.GetComponent<OptionsManager>().percentBottomPole ||
-                    //   row > nRows * (float)OptionsManager.GetComponent<OptionsManager>().percentTopPole)
-                    //{
-                    //    mr.material = MatSnow;
-                    //}
-
-                else if (h.Altitude >= A_Coast && h.Altitude < A_Plains)
-                    mr.material = MatWater;
-                    //if (row < nRows * (float)OptionsManager.GetComponent<OptionsManager>().percentBottomPole ||
-                    //   row > nRows * (float)OptionsManager.GetComponent<OptionsManager>().percentTopPole)
-                    //{
-                    //    mr.material = MatSnow;
-                else
-                    mr.material = MatOcean;
-
                 MeshFilter mfr = GO.GetComponentInChildren<MeshFilter>();
-                mfr.mesh = M_Water;
+
+                if (h.Altitude >= A_Mountain)
+                {
+                    mr.material = MatMountains;
+                    mfr.mesh = M_Mountain;
+                }
+                else if (h.Altitude > A_Hill)
+                {
+                    mr.material = MatLand;
+                    mfr.mesh = M_Hill;
+                }                    
+                else if (h.Altitude >= A_Plains)
+                {
+                    mr.material = MatPlains;
+                    mfr.mesh = M_Water;
+                }                    
+                else if (h.Altitude >= A_Coast)
+                {
+                    mr.material = MatWater;
+                    mfr.mesh = M_Water;
+                }
+                    
+                else
+                {
+                    mr.material = MatOcean;
+                   
+                }
+                   
+
+
 
             }
         }

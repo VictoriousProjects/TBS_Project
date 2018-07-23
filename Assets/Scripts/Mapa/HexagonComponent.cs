@@ -14,8 +14,8 @@ public class HexagonComponent : MonoBehaviour
             Camera.main.transform.position,
              HexMap.nRows,
             HexMap.nColumns,
-            HexMap.OptionsManager.GetComponent<OptionsManager>().allowWrapEastWest,
-            HexMap.OptionsManager.GetComponent<OptionsManager>().allowWrapNorthSouth
+            HexMap.allow_Wrap_EW,
+            HexMap.allow_Wrap_NS
             );
         string temp = Hex.Altitude.ToString("n2");
 

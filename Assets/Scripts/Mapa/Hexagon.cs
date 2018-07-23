@@ -11,25 +11,28 @@ public class Hexagon
 
     public Hexagon()
     {
+        HMap = null;
         C = 0;
         R = 0;
         S = 0;
     }
 
-    public Hexagon(int c, int r)
+    public Hexagon(Hexagonal_Map map, int c, int r)
     {
+        HMap = map;
         C = c;
         R = r;
         S = -(c + r);
     }
 
+    private Hexagonal_Map HMap;
     public float Altitude;
     float rad = 1f;
 
     public Vector3 Position()
     {
         return new Vector3(
-            HexHorizontalSpac() * (this.C + this.R /2f),
+            HexHorizontalSpac() * (this.C + this.R / 2f),
             0,
             HexVerticalSpac() * this.R
         );
@@ -53,15 +56,15 @@ public class Hexagon
         return HexWidth();
     }
 
-    public Vector3 PositionFCamera(Vector3 camPos,float numRows, float numColumns, bool allowWrapEastWest, bool allowWrapNorthSouth)
+    public Vector3 PositionFCamera(Vector3 camPos, float numRows, float numColumns, bool allowWrapEastWest, bool allowWrapNorthSouth)
     {
-       
+
         float mapH = numRows * HexVerticalSpac();
         float mapW = numColumns * HexHorizontalSpac();
 
         Vector3 position = this.Position();
-  
-        if(allowWrapEastWest)
+
+        if (allowWrapEastWest)
         {
             float WidthToCamera = Mathf.Round((position.x - camPos.x) / mapW);
 
@@ -83,7 +86,27 @@ public class Hexagon
     {
         float ret = 0;
 
-        ret = Mathf.Max(Mathf.Abs(a.C - b.C), Mathf.Abs(a.R - b.R), Mathf.Abs(a.S - b.S));
+
+        int dC = Mathf.Abs(a.C - b.C);
+
+        if(a.HMap.allow_Wrap_EW)
+        {
+            if (dC > a.HMap.nColumns / 2)
+            {
+                dC = a.HMap.nColumns - dC;
+            }
+        }
+        int dR = Mathf.Abs(a.R - b.R);
+
+        if (a.HMap.allow_Wrap_NS)
+        {
+            if (dR > a.HMap.nColumns / 2)
+            {
+                dR = a.HMap.nColumns - dR;
+            }
+        }
+
+        ret = Mathf.Max(dC, dR, Mathf.Abs(a.S - b.S));
 
         return (float)ret;
     }
