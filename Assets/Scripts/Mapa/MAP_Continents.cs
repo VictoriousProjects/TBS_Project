@@ -9,7 +9,7 @@ public class MAP_Continents : Hexagonal_Map
     {
         base.GenMap();  // take base the virtual func.
         
-        Random.InitState(0);
+       // Random.InitState(0);
 
         int nContinents = (int)OptionsManager.GetComponent<OptionsManager>().numberContinents; ;
         int continentsSpacing = nColumns / nContinents;

@@ -8,7 +8,8 @@ public class Hexagonal_Map : MonoBehaviour
 
     public GameObject hexagPrefab;
 
-    public Mesh M_Water;
+    public Mesh M_Ocean;
+    public Mesh M_Coast;
     public Mesh M_Land;
     public Mesh M_Mountain;
     public Mesh M_Hill;
@@ -136,18 +137,6 @@ public class Hexagonal_Map : MonoBehaviour
                
                 GO.GetComponent<HexagonComponent>().Hex = h;
                 GO.GetComponent<HexagonComponent>().HexMap = this;
-
-                //if (OptionsManager.GetComponent<OptionsManager>().activateCoordCells)
-                //{
-                //    //if (GO.GetComponentInChildren<Renderer>().enabled == true)
-                //    //   GO.GetComponentInChildren<TextMesh>().text = string.Format("{0},{1}", column, row);
-                //    if (GO.GetComponentInChildren<Renderer>().enabled == true)
-                //        GO.GetComponentInChildren<TextMesh>().text = string.Format("{0}", h.Altitude);
-
-
-                //}
-
-
             }
         }
         UpdateHVisual();
@@ -180,18 +169,18 @@ public class Hexagonal_Map : MonoBehaviour
                 else if (h.Altitude >= A_Plains)
                 {
                     mr.material = MatPlains;
-                    mfr.mesh = M_Water;
+                    mfr.mesh = M_Land;
                 }                    
                 else if (h.Altitude >= A_Coast)
                 {
                     mr.material = MatWater;
-                    mfr.mesh = M_Water;
+                    mfr.mesh = M_Coast;
                 }
                     
                 else
                 {
                     mr.material = MatOcean;
-                   
+                    mfr.mesh = M_Ocean;
                 }
                    
 
