@@ -27,13 +27,15 @@ public class Hexagon
 
     private Hexagonal_Map HMap;
     public float Altitude;
+    public float Humidify;
+    public float Temperature;
     float rad = 1f;
 
     public Vector3 Position()
     {
         return new Vector3(
             HexHorizontalSpac() * (this.C + this.R / 2f),
-            0,
+            0.0f,
             HexVerticalSpac() * this.R
         );
     }
@@ -63,7 +65,7 @@ public class Hexagon
         float mapW = numColumns * HexHorizontalSpac();
 
         Vector3 position = this.Position();
-
+   
         if (allowWrapEastWest)
         {
             float WidthToCamera = Mathf.Round((position.x - camPos.x) / mapW);
@@ -79,6 +81,7 @@ public class Hexagon
             int HeightToCameraToMove = (int)HeightToCamera;
             position.z -= HeightToCameraToMove * mapH;
         }
+        position.y = 0.0f;
         return position;
     }
 
