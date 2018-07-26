@@ -212,17 +212,17 @@ public class Hexagonal_Map : MonoBehaviour
                     else if (h.Humidify > H_Forest)
                     {
                         mr.material = MatPlains;
-                      //  mr.material = MatTest;
-                        float temp = Random.Range(0f, 1f);
+                        //mr.material = MatTest;
+                        float temp = Random.Range(0.0f, 1.0f);
 
                         if (temp < P_ForestHill  /**/ && h.Altitude < A_Hill) // añadir un enum a los hexagonos, y a la vez que se reparten las alturas asignarlo como la tile que es( hill, plain, mountain etc.)
                         {
                             GameObject.Instantiate(Prefap_Forest_Alpine_Hill, GO.transform.position, Quaternion.identity, GO.transform);
                         }
-                        //else if (temp < P_Forest  /**/ && h.Altitude > A_Plains) // añadir un enum a los hexagonos, y a la vez que se reparten las alturas asignarlo como la tile que es( hill, plain, mountain etc.)
-                        //{
-                        //    GameObject.Instantiate(Prefap_Forest_Alpine, GO.transform.position, Quaternion.identity, GO.transform);
-                        //}
+                        else if (temp < P_Forest  /**/ && h.Altitude > A_Plains) // añadir un enum a los hexagonos, y a la vez que se reparten las alturas asignarlo como la tile que es( hill, plain, mountain etc.)
+                        {
+                            GameObject.Instantiate(Prefap_Forest_Alpine, GO.transform.position, Quaternion.identity, GO.transform);
+                        }
 
                     }                    
                     else if (h.Humidify >= H_Plains)

@@ -19,7 +19,7 @@ public class HexagonComponent : MonoBehaviour
             );
         string temp = Hex.Altitude.ToString("n2");
 
-        GetComponentInChildren<TextMesh>().text = string.Format(temp);
+     //   GetComponentInChildren<TextMesh>().text = string.Format(temp);
     }
   
 
