@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class OptionsManager : MonoBehaviour
 {
-
+    [Header("[--CONTROLS--]")]
+    public float moveSpeed= 7.5f;
+    public float sprintMoveMultiplierSpeed = 2f;
     [Header("[--MAP--]")]
     [Header("General")]
 

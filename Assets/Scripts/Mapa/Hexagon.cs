@@ -81,7 +81,7 @@ public class Hexagon
             int HeightToCameraToMove = (int)HeightToCamera;
             position.z -= HeightToCameraToMove * mapH;
         }
-        position.y = 0.0f;
+ 
         return position;
     }
 

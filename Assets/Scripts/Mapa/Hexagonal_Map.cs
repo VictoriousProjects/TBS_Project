@@ -130,7 +130,7 @@ public class Hexagonal_Map : MonoBehaviour
                     allow_Wrap_NS
                     );
 
-                pos.y = +0.8355f;
+                //pos.y = +0.8355f;
 
                     GameObject GO = (GameObject)Instantiate(
                     hexagPrefab,
